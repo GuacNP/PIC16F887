@@ -1,0 +1,162 @@
+
+; PIC16F887 Configuration Bit Settings
+
+; Assembly source line config statements
+
+#include "p16f887.inc"
+
+; CONFIG1
+; __config 0xE0D4
+ __CONFIG _CONFIG1, _FOSC_INTRC_NOCLKOUT & _WDTE_OFF & _PWRTE_OFF & _MCLRE_OFF & _CP_OFF & _CPD_OFF & _BOREN_OFF & _IESO_OFF & _FCMEN_OFF & _LVP_OFF
+; CONFIG2
+; __config 0xFFFF
+ __CONFIG _CONFIG2, _BOR4V_BOR40V & _WRT_OFF
+
+ org 0x00
+ goto MAIN
+ org 0x20
+ 
+NUMERO0    EQU	    0X21
+NUMERO1    EQU	    0X22
+NUMERO2    EQU	    0X23
+NUMERO3    EQU	    0X24
+NUMERO4    EQU	    0X25
+NUMERO5    EQU	    0X26
+NUMERO6    EQU	    0X27
+NUMERO7    EQU	    0X28
+NUMERO8	   EQU	    0X29
+NUMERO9    EQU	    0X2A
+LETRAA	   EQU	    0X2B
+LETRAB	   EQU	    0X2C
+LETRAC	   EQU	    0X2D
+LETRAD	   EQU	    0X2E
+HASHTAG    EQU	    0X2F    
+ASTERIS    EQU	    0X30
+    
+MAIN:
+    banksel TRISD
+    movlw   b'11110000' 
+    movwf   TRISD
+    movlw   b'00000000'
+    movwf   TRISB   
+    banksel PORTD
+
+SETUP:		; b'gfedcba'
+    movlw   b'00111111'
+    movwf   NUMERO0
+    movlw   b'00000110'
+    movwf   NUMERO1
+    movlw   b'01011011'
+    movwf   NUMERO2
+    movlw   b'01001111'
+    movwf   NUMERO3
+    movlw   b'01100110'
+    movwf   NUMERO4
+    movlw   b'01101101'
+    movwf   NUMERO5
+    movlw   b'01111101'
+    movwf   NUMERO6
+    movlw   b'00000111'
+    movwf   NUMERO7
+    movlw   b'01111111'
+    movwf   NUMERO8
+    movlw   b'01100111'
+    movwf   NUMERO9
+    movlw   b'01110111'
+    movwf   LETRAA
+    movlw   b'01111100'
+    movwf   LETRAB
+    movlw   b'00111001'
+    movwf   LETRAC
+    movlw   b'01011110'
+    movwf   LETRAD
+    movlw   b'00110110'
+    movwf   HASHTAG
+    movlw   b'01001001'
+    movwf   ASTERIS
+    movlw   b'00000001'
+    bsf	    PORTD,0
+    
+
+COL:
+    call    MULTIPLEX
+    movlw   b'00000000'
+    movwf   PORTB
+    btfsc   PORTD,7
+    call    ROW1
+    btfsc   PORTD,6
+    call    ROW2
+    btfsc   PORTD,5
+    call    ROW3
+    btfsc   PORTD,4
+    call    ROW4
+    goto    COL
+
+    
+MULTIPLEX:
+    rlf     PORTD,1
+    btfsc   PORTD,0
+    RETURN
+    btfsc   PORTD,1
+    RETURN
+    btfsc   PORTD,2
+    RETURN
+    btfsc   PORTD,3
+    RETURN
+    bsf	    PORTD,0
+    RETURN
+
+ROW1:
+    movlw   b'00000000'
+    movwf   PORTB
+    btfsc   PORTD,0
+    movf    NUMERO1,0
+    btfsc   PORTD,1
+    movf    NUMERO2,0
+    btfsc   PORTD,2
+    movf    NUMERO3,0
+    btfsc   PORTD,3
+    movf    LETRAA,0
+    movwf   PORTB
+    RETURN
+ROW2:
+    movlw   b'00000000'
+    movwf   PORTB
+    btfsc   PORTD,0
+    movf    NUMERO4,0
+    btfsc   PORTD,1
+    movf    NUMERO5,0
+    btfsc   PORTD,2
+    movf    NUMERO6,0
+    btfsc   PORTD,3
+    movf    LETRAB,0
+    movwf   PORTB
+    RETURN
+ROW3:
+    movlw   b'00000000'
+    movwf   PORTB
+    btfsc   PORTD,0
+    movf    NUMERO7,0
+    btfsc   PORTD,1
+    movf    NUMERO8,0
+    btfsc   PORTD,2
+    movf    NUMERO9,0
+    btfsc   PORTD,3
+    movf    LETRAC,0
+    movwf   PORTB
+    RETURN
+ROW4:
+    movlw   b'00000000'
+    movwf   PORTB
+    btfsc   PORTD,0
+    movf    ASTERIS,0
+    btfsc   PORTD,1
+    movf    NUMERO0,0
+    btfsc   PORTD,2
+    movf    HASHTAG,0
+    btfsc   PORTD,3
+    movf    LETRAD,0
+    movwf   PORTB
+    RETURN
+END
+
