@@ -1,0 +1,55 @@
+
+; PIC16F887 Configuration Bit Settings
+
+; Assembly source line config statements
+
+#include "p16f887.inc"
+
+; CONFIG1
+; __config 0xE0D4
+ __CONFIG _CONFIG1, _FOSC_INTRC_NOCLKOUT & _WDTE_OFF & _PWRTE_OFF & _MCLRE_OFF & _CP_OFF & _CPD_OFF & _BOREN_OFF & _IESO_OFF & _FCMEN_OFF & _LVP_OFF
+; CONFIG2
+; __config 0xFFFF
+ __CONFIG _CONFIG2, _BOR4V_BOR40V & _WRT_OFF
+
+ org 0x00
+ goto MAIN
+ org 0x20
+ 
+DCounter1 EQU 0X21
+DCounter2 EQU 0X22
+DCounter3 EQU 0X23
+
+MAIN:
+    banksel TRISB
+    movlw   b'00000000'
+    movwf   TRISB
+    banksel PORTB
+    clrf    PORTB
+DISNEY:
+    BSF     PORTB,0
+    CALL    DELAY
+    BCF     PORTB,0
+    CALL    DELAY
+    GOTO    DISNEY
+    
+DELAY:
+    MOVLW 0X6d
+    MOVWF DCounter1
+    MOVLW 0X5e
+    MOVWF DCounter2
+    MOVLW 0X1a
+    MOVWF DCounter3
+LOOP:
+    DECFSZ DCounter1, 1
+    GOTO LOOP
+    MOVLW 0X6d
+    MOVWF DCounter1
+    DECFSZ DCounter2, 1
+    GOTO LOOP
+    MOVLW 0X5e
+    MOVWF DCounter2
+    DECFSZ DCounter3, 1
+    GOTO LOOP
+    RETURN
+END
